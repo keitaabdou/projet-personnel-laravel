@@ -22,6 +22,8 @@ class CreateArticlesTable extends Migration
             $table->foreignId("type_article_id")->constrained();
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
