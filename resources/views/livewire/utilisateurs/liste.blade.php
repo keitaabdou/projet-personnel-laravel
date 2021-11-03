@@ -44,7 +44,7 @@
                 <td class="text-center"><span class="tag tag-success">{{ $user->created_at->diffForHumans() }}</span></td>
                 <td class="text-center">
                     <button class="btn btn-link"><i class="far fa-edit "></i></button>
-                    <button class="btn btn-link"><i class="far fa-trash-alt "></i></button>
+                    <button class="btn btn-link" wire:click="confirmDelete('{{ $user->prenom }} {{ $user->nom }}', {{$user->id}})"><i class="far fa-trash-alt "></i></button>
                 </td>
                 </tr>
             @endforeach
@@ -61,3 +61,35 @@
     <!-- /.card -->
     </div>
 </div>
+<script>
+    window.addEventListener("ShowConfirmMessage", event=>{
+        Swal.fire({
+        title: event.detail.message.title,
+        text: event.detail.message.text,
+        icon: event.detail.message.type,
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Continuer',
+        cancelButtonText: 'Annuler'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            if(event.detail.message.data){
+                @this.deleteUser(event.detail.message.data.user_id)
+            }
+
+        }
+        })
+
+        window.addEventListener("ShowSuccessMessage", event=>{
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            toast: true,
+            title: event.detail.message || "Operation effectuée avec succès!",
+            showConfirmButton: false,
+            timer: 3000
+        })
+    })
+    })
+</script>

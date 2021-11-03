@@ -55,8 +55,6 @@ class Utilisateurs extends Component
     }
     public function addUser(){
 
-
-
         // Vérifier que les informations envoyées par le formulaire sont correctes
         $validationAttributes = $this->validate();
 
@@ -70,5 +68,21 @@ class Utilisateurs extends Component
 
         $this->dispatchBrowserEvent("ShowSuccessMessage", ["message"=>"utilisateur crée avec succès!"]);
 
+    }
+    public function confirmDelete($name, $id){
+        $this->dispatchBrowserEvent("ShowConfirmMessage", ["message"=> [
+            "text" => "Vous êtes sur le point de supprimer $name de la liste des utilisateurs. Voulez-vous Continuer ?",
+            "title" => "Etes-vous sur de continuer?",
+            "type" => "waring",
+            "data" => [
+                "user_id" => $id
+            ]
+        ]]);
+
+    }
+    public function deleteUser($id){
+        User::destroy($id);
+
+        $this->dispatchBrowserEvent("ShowSuccessMessage", ["message"=>"utilisateur supprimé avec succès!"]);
     }
 }
