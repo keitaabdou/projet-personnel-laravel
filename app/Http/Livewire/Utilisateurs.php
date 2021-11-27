@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Facade\Ignition\DumpRecorder\Dump;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -12,21 +14,12 @@ class Utilisateurs extends Component
     use WithPagination;
 
     protected $paginationTheme = "bootstrap";
-    public $isBtnAddClicked = false;
+
+    public $currentPage = "liste";
 
     public $newUser = [];
+    public $editUser = [];
 
-    //verication du formulaire
-
-    protected $rules = [
-        'newUser.nom' => 'required',
-        'newUser.prenom' => 'required',
-        'newUser.email' => 'required|email|unique:users,email',
-        'newUser.telephone1' => 'required|numeric|unique:users,telephone1',
-        'newUser.pieceIdentite' => 'required',
-        'newUser.sexe' => 'required',
-        'newUser.numeroPieceIdentite' => 'required|unique:users,numeroPieceIdentite',
-    ];
 
 
     // protected $messages = [
@@ -47,12 +40,45 @@ class Utilisateurs extends Component
         ->extends("layouts.master")
         ->section("contenu");
     }
+
+    public function rules(){
+        if($this->currentPage == PAGEEDITFORM){
+            return  [
+                'editUser.nom' => 'required',
+                'editUser.prenom' => 'required',
+                'editUser.email' => ['required', 'email', Rule::unique("users", "email")->ignore($this->editUser['id']) ],
+                'editUser.telephone1' => ['required', 'numeric', Rule::unique("users", "telephone1")->ignore($this->editUser['id']) ],
+                'editUser.pieceIdentite' => ['required'],
+                'editUser.sexe' => 'required',
+                'editUser.numeroPieceIdentite' => ['required', Rule::unique("users", "pieceIdentite")->ignore($this->editUser['id'])],
+            ];
+        }
+
+        return [
+            'newUser.nom' => 'required',
+            'newUser.prenom' => 'required',
+            'newUser.email' => 'required|email|unique:users,email',
+            'newUser.telephone1' => 'required|numeric|unique:users,telephone1',
+            'newUser.pieceIdentite' => 'required',
+            'newUser.sexe' => 'required',
+            'newUser.numeroPieceIdentite' => 'required|unique:users,numeroPieceIdentite',
+        ];
+    }
+
     public function goToAddUser(){
-        $this->isBtnAddClicked = true;
+        $this->currentPage = PAGECREATEFORM;
     }
+
+    public function goToEditUser($id){
+        $this->editUser = User::find($id)->toArray();
+        $this->currentPage = PAGEEDITFORM;
+    }
+
      public function goToListUser(){
-         $this->isBtnAddClicked = false;
+        $this->currentPage = PAGELIST;
+        $this->editUser = [];
     }
+
     public function addUser(){
 
         // Vérifier que les informations envoyées par le formulaire sont correctes
@@ -69,8 +95,34 @@ class Utilisateurs extends Component
         $this->dispatchBrowserEvent("ShowSuccessMessage", ["message"=>"utilisateur crée avec succès!"]);
 
     }
+
+    public function updateUser(){
+
+        $validationAttributes = $this->validate();
+
+        User::find($this->editUser["id"])->update($validationAttributes["editUser"]);
+
+        $this->dispatchBrowserEvent("showSuccessMessage", ["message"=>"Utilisateur mis à jour avec succès!"]);
+
+    }
+
+    public function confirmPwdReset(){
+        $this->dispatchBrowserEvent("showConfirmMessage", ["message"=> [
+            "text" => "Vous êtes sur le point de réinitialiser le mot de passe de ce utilisateur. Voulez-vous Continuer ?",
+            "title" => "Etes-vous sur de continuer?",
+            "type" => "waring"
+        ]]);
+    }
+
+    public function resetPassowrd(){
+
+        User::find($this->editUser["id"])->update(["password" => Hash::make(DEFAULTPASSWORD)]);
+        $this->dispatchBrowserEvent("showSuccessMessage", ["message"=>"Mot de passe utilisateur réinitialiser avec succès!"]);
+
+    }
+
     public function confirmDelete($name, $id){
-        $this->dispatchBrowserEvent("ShowConfirmMessage", ["message"=> [
+        $this->dispatchBrowserEvent("showConfirmMessage", ["message"=> [
             "text" => "Vous êtes sur le point de supprimer $name de la liste des utilisateurs. Voulez-vous Continuer ?",
             "title" => "Etes-vous sur de continuer?",
             "type" => "waring",
