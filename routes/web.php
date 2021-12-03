@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Livewire\TypeArticlesComp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Utilisateurs;
@@ -26,6 +27,7 @@ Route::group([
     "as" => "admin."
 ], function(){
 
+    //GESTION DES HABILITATIONS
     Route::group([
         "prefix" =>"habilitations",
         "as" => "habilitations."
@@ -34,5 +36,13 @@ Route::group([
         Route::get("/utilisateurs", Utilisateurs::class)->name("users.index");
     });
 
+    //GESTION DES ARTICLES
+    Route::group([
+        "prefix" =>"gestarticles",
+        "as" => "gestarticles."
+    ], function(){
+
+        Route::get("/typearticles", TypeArticlesComp::class)->name("typearticles");
+    });
 });
 

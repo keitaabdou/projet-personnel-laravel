@@ -1,6 +1,7 @@
-<div wire:ingore.self>
+<div wire:ignore.self>
+
     @if($currentPage == PAGECREATEFORM)
-        @include("livewire.utilisateurs.create")
+         @include("livewire.utilisateurs.create")
     @endif
 
     @if($currentPage == PAGEEDITFORM)
@@ -10,6 +11,7 @@
     @if($currentPage == PAGELIST)
         @include("livewire.utilisateurs.liste")
     @endif
+
 </div>
 
 <script>
@@ -42,8 +44,11 @@
             if(event.detail.message.data){
                 @this.deleteUser(event.detail.message.data.user_id)
             }
-            @this.resetPassowrd()
+
+            @this.resetPassword()
+
         }
         })
     })
+
 </script>
