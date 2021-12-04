@@ -31,6 +31,7 @@
                         <tr>
                             <td colspan="2">
                                 <input type="text"
+                                wire:keydown.enter="addNewTypeArticle"
                                 class="form-control @error('newTypeArticleName') is-invalid @enderror" wire:model="newTypeArticleName">
                                 @error('newTypeArticleName')
                                     <span class="text-danger">{{ $message }}</span>
@@ -47,8 +48,8 @@
                             <td>{{$typearticle->nom}}</td>
                             <td class="text-center">{{optional($typearticle->created_at)->diffForHumans()}}</td>
                             <td class="text-center">
-                                <button class="btn btn-link"> <i class="far fa-edit"></i> </button>
-                                <button class="btn btn-link"> <i class="far fa-trash-alt"></i> </button>
+                                <button class="btn btn-link" wire:click="editTypeArticle({{$typearticle->id}})"> <i class="far fa-edit"></i> </button>
+                                <button class="btn btn-link" wire:click="confirmDelete('{{$typearticle->nom}}', {{$typearticle->id}})"> <i class="far fa-trash-alt"></i> </button>
                             </td>
                         </tr>
                     @endforeach
@@ -71,3 +72,61 @@
 
 
 </div>
+
+<script>
+    window.addEventListener("showEditForm",function(e){
+        Swal.fire({
+        title: "Edition d'un type d'article",
+        input: 'text',
+        inputValue: e.detail.typearticle.nom,
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Modifier',
+        cancelButtonText: 'Annuler',
+        inputValidator: (value) => {
+            if (!value) {
+            return 'Champ obligatoire'
+            }
+
+            @this.udpateTypeArticle(e.detail.typearticle.id, value)
+        }
+
+    })
+})
+</script>
+<script>
+    window.addEventListener("showSuccessMessage", event=>{
+        Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                toast:true,
+                title: event.detail.message || "Opération effectuée avec succès!",
+                showConfirmButton: false,
+                timer: 5000
+                }
+            )
+    })
+</script>
+<script>
+    window.addEventListener("showConfirmMessage", event=>{
+       Swal.fire({
+        title: event.detail.message.title,
+        text: event.detail.message.text,
+        icon: event.detail.message.type,
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Continuer',
+        cancelButtonText: 'Annuler'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            if(event.detail.message.data){
+                @this.deleteTypeArticle(event.detail.message.data.type_article_id)
+            }
+
+        }
+        })
+    })
+
+</script>

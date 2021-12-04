@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\TypeArticle;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -49,8 +50,44 @@ class TypeArticlesComp extends Component
         TypeArticle::create(["nom" => $validated["newTypeArticleName"]]);
 
         $this->toggleShowAddTypeArticleForm();
+        $this->dispatchBrowserEvent("showEditForm", ["message" => "Type d'article ajouté avec succès!"]);
+
     }
 
+    public function editTypeArticle(TypeArticle $typeArticle){
+        $this->dispatchBrowserEvent("showEditForm", ["typearticle" => $typeArticle]);
+
+    }
+
+    public function udpateTypeArticle(TypeArticle $typeArticle, $valueFromJS){
+        $this->newValue = $valueFromJS;
+        $validated = $this->validate([
+            "newValue" => ["required", "max:50", Rule::unique("type_articles", "nom")->ignore($typeArticle->id)]
+        ]);
+
+        $typeArticle->update(["nom" => $validated["newValue"]]);
+
+        $this->dispatchBrowserEvent("showSuccessMessage", ["message" => "Type d'article mis à jour avec succès"]);
+
+    }
+
+    public function confirmDelete($name, $id){
+        $this->dispatchBrowserEvent("showConfirmMessage", ["message"=> [
+            "text" => "Vous êtes sur le point de supprimer $name de la liste des types d'articles. Voulez-vous continuer?",
+            "title" => "Êtes-vous sûr de continuer?",
+            "type" => "warning",
+            "data" => [
+                "type_article_id" => $id
+            ]
+        ]]);
+    }
+
+    public function deleteTypeArticle(TypeArticle $typeArticle){
+        $typeArticle->delete();
+
+        $this->dispatchBrowserEvent("showSuccessMessage", ["message"=>"Type d'article supprimé avec succès!"]);
+
+    }
 
 
 }

@@ -16,4 +16,6 @@ class TypeArticle extends Model
     public function articles(){
       return $this->hasMany(Article::class);
     }
+
+
 }
