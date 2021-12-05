@@ -14,6 +14,8 @@ class TypeArticlesComp extends Component
     public $search = "";
     public $isAddTypeArticle = false;
     public $newTypeArticleName = "";
+    public $newValue= "";
+    public $selectedTypeArticle;
 
     protected $paginationTheme ="Bootstrap";
 
@@ -87,6 +89,15 @@ class TypeArticlesComp extends Component
 
         $this->dispatchBrowserEvent("showSuccessMessage", ["message"=>"Type d'article supprimé avec succès!"]);
 
+    }
+
+    public function showProp(TypeArticle $typeArticle){
+        $this->selectedTypeArticle = $typeArticle;
+        $this->dispatchBrowserEvent("showModal", []);
+
+    }
+    public function closeModal(){
+        $this->dispatchBrowserEvent("closeModal", []);
     }
 
 

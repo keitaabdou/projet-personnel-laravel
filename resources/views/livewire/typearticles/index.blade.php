@@ -1,4 +1,53 @@
 <div>
+    <div class="modal fade" id="modalProp" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestion des caracteristique de "{{optional($selectedTypeArticle)->nom}}"</h5>
+
+                  </div>
+                  <div class="modal-body">
+                    <div class="d-flex my-4 bg-gray-light p-3">
+                        <div class="d-flex flex-grow-1 mr-2">
+                            <div class="flex-grow-1 mr-2">
+                                <input type="text" placeholder="Nom" class="form-control">
+                            </div>
+                            <div class="d-flex flex-grow-1">
+                                <select class="form-control">
+                                    <option value="">--Champ obligatoire--</option>
+                                    <option value="true">Oui</option>
+                                    <option value="false">Nom</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-success">Ajouter</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="bg-primary">
+                            <th>Nom</th>
+                            <th>Est obligatoire</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Marque</td>
+                                <td>Oui</td>
+                                <td>
+                                    <button class="btn btn-link"> <i class="far fa-edit"></i> </button>
+                                    <button class="btn btn-link" > <i class="far fa-trash-alt"></i> </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" wire:click="closeModal">Fermer</button>
+                  </div>
+            </div>
+        </div>
+
+    </div>
+
     <div class="row p-4 pt-5">
         <div class="col-12">
           <div class="card">
@@ -49,6 +98,7 @@
                             <td class="text-center">{{optional($typearticle->created_at)->diffForHumans()}}</td>
                             <td class="text-center">
                                 <button class="btn btn-link" wire:click="editTypeArticle({{$typearticle->id}})"> <i class="far fa-edit"></i> </button>
+                                <button class="btn btn-link" wire:click="showProp({{$typearticle->id}})"> <i class="fas fa-list"></i> propriétés</button>
                                 <button class="btn btn-link" wire:click="confirmDelete('{{$typearticle->nom}}', {{$typearticle->id}})"> <i class="far fa-trash-alt"></i> </button>
                             </td>
                         </tr>
@@ -66,7 +116,7 @@
           </div>
           <!-- /.card -->
         </div>
-      </div>
+    </div>
 
 
 
@@ -127,6 +177,19 @@
 
         }
         })
+    })
+
+</script>
+<script>
+    window.addEventListener("showModal", event=>{
+        $("#modalProp").modal({
+            "show": true,
+            "backdrop": "static"
+
+        })
+    })
+    window.addEventListener("closeModal", event=>{
+        $("#modalProp").modal("hide")
     })
 
 </script>
