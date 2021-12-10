@@ -17,5 +17,4 @@ class TypeArticle extends Model
       return $this->hasMany(Article::class);
     }
 
-
 }

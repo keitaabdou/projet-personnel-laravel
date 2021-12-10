@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Livewire\ArticleComp;
 use App\Http\Livewire\TypeArticlesComp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +43,8 @@ Route::group([
         "as" => "gestarticles."
     ], function(){
 
-        Route::get("/typearticles", TypeArticlesComp::class)->name("typearticles");
+        Route::get("/types", TypeArticlesComp::class)->name("types");
+        Route::get("/articles", ArticleComp::class)->name("articles");
     });
 });
 
