@@ -49,7 +49,7 @@
     </script>
     <script>
         window.addEventListener("showModal", event=>{
-            $("#modalProp").modal({
+            $("#modalAdd").modal({
                 "show": true,
                 "backdrop": "static"
 

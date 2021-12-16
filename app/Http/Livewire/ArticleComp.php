@@ -49,6 +49,10 @@ class ArticleComp extends Component
             ->section("contenu");
     }
 
+    public function showAddTypeArticleModal(){
+        $this->dispatchBrowserEvent("showModal");
+    }
+
     public function editArticle(Article $article){
 
     }
