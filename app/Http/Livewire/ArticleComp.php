@@ -16,6 +16,8 @@ class ArticleComp extends Component
 
     public $search = "";
     public $filtreType = "", $filtreEtat = "";
+    public $addArticle = [];
+    public $proprietesArticles = null;
 
 
     public function render()
@@ -49,6 +51,12 @@ class ArticleComp extends Component
             ->section("contenu");
     }
 
+    public function updated($property){
+        if($property == "addArticle.type"){
+            $this->proprietesArticles = TypeArticle::find($this->addArticle["type"])->proprietes;
+        }
+    }
+
     public function showAddTypeArticleModal(){
         $this->dispatchBrowserEvent("showModal");
     }
@@ -59,5 +67,13 @@ class ArticleComp extends Component
 
     public function confirmDelete(Article $article){
 
+    }
+    public function closeModal(){
+        $this->dispatchBrowserEvent("closeModal");
+
+    }
+
+    public function ajoutArticle(){
+        dump($this->addArticle);
     }
 }

@@ -56,7 +56,7 @@
             })
         })
         window.addEventListener("closeModal", event=>{
-            $("#modalProp").modal("hide")
+            $("#modalAdd").modal("hide")
         })
 
         window.addEventListener("showEditModal", event=>{
