@@ -74,6 +74,25 @@ class ArticleComp extends Component
     }
 
     public function ajoutArticle(){
-        dump($this->addArticle);
+        //dump($this->addArticle);
+        $validateArr = [
+            "addArticle.nom" => "string|min:3|required",
+            "addArticle.noSerie" => "string|max:50|min:3|required",
+            "addArticle.type" => "required"
+        ];
+
+        $customErrMessage = [];
+
+        foreach ($this->proprietesArticles as $propriete){
+            $field = "addArticle.prop.".$propriete->nom;
+            if($propriete->estObligatoire == 1){
+                $validateArr[$field] ="required";
+                $customErrMessage["$field.required"] = "Le champ " .$propriete->nom. " est obligatoire.";
+            }else{
+                $validateArr[$field] ="nullable";
+            }
+        }
+
+        $this->validate($validateArr, $customErrMessage);
     }
 }

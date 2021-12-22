@@ -9,6 +9,16 @@
               <div class="modal-body">
                 <div class="d-flex">
                     <div class="my-4 bg-gray-light p-3 flex-grow-1">
+                    @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-ban"></i>Erreurs!</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{$error}}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                    @endif
                         <div class="form-group">
                             <label for="">Nom</label>
                             <input type="text" wire:model="addArticle.nom" class="form-control">
@@ -33,8 +43,12 @@
                                 <div class="form-group">
                                     <label for="">{{$propriete->nom}} @if ($propriete->estObligatoire) (Requis) @else "(Optionel)"
 
-                                    @endif</label>
-                                    <input type="text"  class="form-control">
+                                    @endif
+                                    </label>
+                                    @php
+                                        $field = "addArticle.prop.".$propriete->nom;
+                                    @endphp
+                                    <input type="text" wire:model="{{ $field }}"  class="form-control">
                                 </div>
                             @endforeach
                         </div>
