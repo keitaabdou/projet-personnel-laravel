@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Article;
+use App\Models\ArticlePropriete;
 use App\Models\TypeArticle;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -53,11 +54,14 @@ class ArticleComp extends Component
 
     public function updated($property){
         if($property == "addArticle.type"){
-            $this->proprietesArticles = TypeArticle::find($this->addArticle["type"])->proprietes;
+            $this->proprietesArticles = optional(TypeArticle::find($this->addArticle["type"]))->proprietes;
         }
     }
 
     public function showAddTypeArticleModal(){
+        $this->resetValidation();
+        $this->addArticle = [];
+        $this->proprietesArticles=[];
         $this->dispatchBrowserEvent("showModal");
     }
 
@@ -82,9 +86,13 @@ class ArticleComp extends Component
         ];
 
         $customErrMessage = [];
+        $propIds= [];
 
-        foreach ($this->proprietesArticles as $propriete){
+        foreach ($this->proprietesArticles?: [] as $propriete){
             $field = "addArticle.prop.".$propriete->nom;
+
+            $propIds[$propriete->nom] = $propriete->id;
+
             if($propriete->estObligatoire == 1){
                 $validateArr[$field] ="required";
                 $customErrMessage["$field.required"] = "Le champ " .$propriete->nom. " est obligatoire.";
@@ -93,6 +101,22 @@ class ArticleComp extends Component
             }
         }
 
-        $this->validate($validateArr, $customErrMessage);
+        $validatedData = $this->validate($validateArr, $customErrMessage);
+        $article = Article::create([
+            "nom" => $validatedData["addArticle"]["nom"],
+            "noSerie" => $validatedData["addArticle"]["noSerie"],
+            "type_article_id" => $validatedData["addArticle"]["type"]
+        ]);
+
+        foreach($validatedData["addArticle"]["prop"]?: [] as $key => $prop){
+            ArticlePropriete::create([
+                "article_id" => $article->id,
+                "propriete_article_id" => $propIds[$key],
+                "valeur"=> $prop
+            ]);
+
+        }
+        $this->dispatchBrowserEvent("showSuccessMessage", ["message"=>"Article ajouté avec succès!"]);
+        $this->closeModal();
     }
 }
